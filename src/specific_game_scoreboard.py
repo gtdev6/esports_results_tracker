@@ -1,6 +1,51 @@
 import customtkinter as ctk
+import regular_user_interface
+import pandas as pd
+import os
 
-from src import regular_user_interface
+
+def ensure_matches_file():
+    # Define the path to the matches.csv file
+    file_path = "matches.csv"
+
+    # Check if the file exists
+    if not os.path.exists(file_path):
+        # Create a new DataFrame with the required columns
+        columns = ["Match ID", "Team A", "Team B", "Game", "Winning Team", "Score", "Date"]
+        df = pd.DataFrame(columns=columns)
+        
+        # Save the DataFrame to a CSV file
+        df.to_csv(file_path, index=False)
+        print(f"Created {file_path} with columns {columns}")
+
+
+def load_game_scores(game_name):
+    try:
+        ensure_matches_file()  # Ensure the matches file exists
+
+        # Load matches from CSV
+        matches = pd.read_csv("matches.csv")
+
+        # Filter matches for the specific game
+        game_matches = matches[matches["Game"].str.lower() == game_name.lower()]
+
+        print(game_matches)
+
+        # Group by Winning Team and sum their scores
+        team_scores = (
+            game_matches.groupby("Winning Team")["Score"]
+            .sum()
+            .reset_index()
+            .rename(columns={"Winning Team": "Team Name"})
+            .sort_values(by="Score", ascending=False)
+            .reset_index(drop=True)
+        )
+
+        return team_scores
+    except Exception as e:
+        print(f"Error loading game scores: {e}")
+        return pd.DataFrame(columns=["Team Name", "Score"])
+
 
 
 def create_specific_score_root_frame(frame, parent_frame):
@@ -28,7 +73,7 @@ def create_specific_score_root_frame(frame, parent_frame):
                                 command=lambda: go_back_callback(score_board_main_frame, parent_frame))
     back_button.pack(side="right", padx=10)
 
-    create_game_specific_table(score_board_main_frame, "I.E fortnight")
+    create_game_specific_table(score_board_main_frame, "Fortnite")
 
 
 
@@ -46,54 +91,39 @@ def create_game_specific_table(frame, game_name):
     scrollable_frame = ctk.CTkScrollableFrame(game_frame, width=600, height=300)
     scrollable_frame.pack(pady=10, padx=20, fill="x")
 
-    # Create the table header
+   # Create the table header
     headers = ["Rank", "Team Name", "Score"]
     for col, header in enumerate(headers):
         header_label = ctk.CTkLabel(scrollable_frame, text=header, font=("Arial", 14, "bold"), width=20, anchor="w")
         header_label.grid(row=0, column=col, padx=5, pady=5)
 
-    # Placeholder data for the specific game
-    scores = [
-        {"team": "Team Alpha", "score": 45},
-        {"team": "Team Beta", "score": 38},
-        {"team": "Team Gamma", "score": 50},
-        {"team": "Team Delta", "score": 30},
-        {"team": "Team Epsilon", "score": 25}
-    ]
+    # Load scores for the specific game
 
-    # Sort scores in descending order
-    scores = sorted(scores, key=lambda x: x["score"], reverse=True)
 
-    # Populate the table with data
-    for rank, data in enumerate(scores, start=1):
-        rank_label = ctk.CTkLabel(scrollable_frame, text=str(rank), font=("Arial", 12), width=20, anchor="w")
-        rank_label.grid(row=rank, column=0, padx=5, pady=5)
+    # Function to refresh the table
+    def refresh_game_table():
+        scores = load_game_scores(game_name)
+        # Clear the existing rows except for the header
+        for widget in scrollable_frame.winfo_children()[len(headers):]:
+            widget.destroy()
 
-        team_label = ctk.CTkLabel(scrollable_frame, text=data["team"], font=("Arial", 12), width=20, anchor="w")
-        team_label.grid(row=rank, column=1, padx=5, pady=5)
+        # Populate the table with refreshed data
+        for rank, row in enumerate(scores.itertuples(index=False), start=1):
+            rank_label = ctk.CTkLabel(scrollable_frame, text=str(rank), font=("Arial", 12), width=20, anchor="w")
+            rank_label.grid(row=rank, column=0, padx=5, pady=5)
 
-        score_label = ctk.CTkLabel(scrollable_frame, text=str(data["score"]), font=("Arial", 12), width=20, anchor="w")
-        score_label.grid(row=rank, column=2, padx=5, pady=5)
+            team_label = ctk.CTkLabel(scrollable_frame, text=row[0], font=("Arial", 12), width=20, anchor="w")
+            team_label.grid(row=rank, column=1, padx=5, pady=5)
 
+            score_label = ctk.CTkLabel(scrollable_frame, text=str(row[1]), font=("Arial", 12), width=20, anchor="w")
+            score_label.grid(row=rank, column=2, padx=5, pady=5)
+
+    # Refresh the table initially to show data
+    refresh_game_table()
     # Add a refresh button
-    refresh_button = ctk.CTkButton(game_frame, text="Refresh Scores", command=lambda: refresh_game_table(scrollable_frame, scores))
+    refresh_button = ctk.CTkButton(game_frame, text="Refresh Scores", command=lambda: refresh_game_table)
     refresh_button.pack(pady=20)
 
-def refresh_game_table(scrollable_frame, scores):
-    # Clear the existing rows except for the header
-    for widget in scrollable_frame.winfo_children()[3:]:
-        widget.destroy()
-
-    # Repopulate the table with updated scores
-    for rank, data in enumerate(scores, start=1):
-        rank_label = ctk.CTkLabel(scrollable_frame, text=str(rank), font=("Arial", 12), width=20, anchor="w")
-        rank_label.grid(row=rank, column=0, padx=5, pady=5)
-
-        team_label = ctk.CTkLabel(scrollable_frame, text=data["team"], font=("Arial", 12), width=20, anchor="w")
-        team_label.grid(row=rank, column=1, padx=5, pady=5)
-
-        score_label = ctk.CTkLabel(scrollable_frame, text=str(data["score"]), font=("Arial", 12), width=20, anchor="w")
-        score_label.grid(row=rank, column=2, padx=5, pady=5)
 
 
 

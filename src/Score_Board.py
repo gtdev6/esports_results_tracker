@@ -1,6 +1,40 @@
 import customtkinter as ctk
+import regular_user_interface
+import pandas as pd
+import os
 
-from src import regular_user_interface
+def ensure_teams_file():
+    # Define the path to the teams.csv file
+    file_path = "teams.csv"
+
+    # Check if the file exists
+    if not os.path.exists(file_path):
+        # Create a new DataFrame with the required columns
+        columns = ["Team Name", "Score"]
+        df = pd.DataFrame(columns=columns)
+        
+        # Save the DataFrame to a CSV file
+        df.to_csv(file_path, index=False)
+        print(f"Created {file_path} with columns {columns}")
+
+def load_team_scores():
+    try:
+        ensure_teams_file()  # Ensure the teams file exists
+
+        # Load team scores from CSV
+        teams = pd.read_csv("teams.csv")
+
+        # Ensure "Score" is numeric
+        teams["Score"] = pd.to_numeric(teams["Score"], errors="coerce").fillna(0)
+
+        # Sort teams by score in descending order
+        sorted_teams = teams.sort_values(by="Score", ascending=False).reset_index(drop=True)
+        
+        return sorted_teams
+    except Exception as e:
+        print(f"Error loading team scores: {e}")
+        return pd.DataFrame(columns=["Team Name", "Score"])
+
 
 def create_score_root_frame(frame, parent_frame):
     # Hide the parent frame
@@ -44,37 +78,37 @@ def create_scoreboard(frame):
     # table_frame = ctk.CTkFrame(scrollable_frame)
     # table_frame.pack(pady=10, padx=20, fill="x")
 
-    # Create the table header
+# Create the table header
     headers = ["Rank", "Team Name", "Score"]
     for col, header in enumerate(headers):
         header_label = ctk.CTkLabel(table_frame, text=header, font=("Arial", 14, "bold"), width=20, anchor="w")
         header_label.grid(row=0, column=col, padx=5, pady=5)
 
-    # Placeholder data for the scoreboard
-    scores = [
-        {"team": "Team Alpha", "score": 85},
-        {"team": "Team Beta", "score": 78},
-        {"team": "Team Gamma", "score": 90},
-        {"team": "Team Delta", "score": 70},
-        {"team": "Team Epsilon", "score": 65}
-    ]
+    # Function to refresh table
+    def refresh_scoreboard():
+    # Load team scores from CSV
+        team_scores = load_team_scores()
 
-    # Sort scores in descending order
-    scores = sorted(scores, key=lambda x: x["score"], reverse=True)
+        # Clear existing data rows except for the headers
+        for widget in table_frame.winfo_children()[len(headers):]:
+            widget.destroy()
 
-    # Populate the table with data
-    for rank, data in enumerate(scores, start=1):
-        rank_label = ctk.CTkLabel(table_frame, text=str(rank), font=("Arial", 12), width=20, anchor="w")
-        rank_label.grid(row=rank, column=0, padx=5, pady=5)
+        # Add refreshed data from team_scores
+        for rank, row in enumerate(team_scores.itertuples(index=False), start=1):
+            rank_label = ctk.CTkLabel(table_frame, text=str(rank), font=("Arial", 12), width=20, anchor="w")
+            rank_label.grid(row=rank, column=0, padx=5, pady=5)
 
-        team_label = ctk.CTkLabel(table_frame, text=data["team"], font=("Arial", 12), width=20, anchor="w")
-        team_label.grid(row=rank, column=1, padx=5, pady=5)
+            team_label = ctk.CTkLabel(table_frame, text=row[0], font=("Arial", 12), width=20, anchor="w")
+            team_label.grid(row=rank, column=1, padx=5, pady=5)
 
-        score_label = ctk.CTkLabel(table_frame, text=str(data["score"]), font=("Arial", 12), width=20, anchor="w")
-        score_label.grid(row=rank, column=2, padx=5, pady=5)
+            score_label = ctk.CTkLabel(table_frame, text=str(row[1]), font=("Arial", 12), width=20, anchor="w")
+            score_label.grid(row=rank, column=2, padx=5, pady=5)
+
+    # Refresh the table initially to show data
+    refresh_scoreboard()
 
     # Add a refresh button
-    refresh_button = ctk.CTkButton(scoreboard_frame, text="Refresh Scores", command=lambda: refresh_scoreboard(table_frame, scores))
+    refresh_button = ctk.CTkButton(scoreboard_frame, text="Refresh Scores", command=lambda: refresh_scoreboard)
     refresh_button.pack(pady=20)
 
 
@@ -104,3 +138,17 @@ def go_back_callback(current_frame, parent_frame):
 
     regular_user_interface.show_regular_user_frame(root=parent_frame)
 
+
+
+if __name__ == "__main__":
+    # Create example team data for testing
+    example_teams = [
+        {"Team Name": "Team Alpha", "Score": 85},
+        {"Team Name": "Team Beta", "Score": 78},
+        {"Team Name": "Team Gamma", "Score": 90},
+        {"Team Name": "Team Delta", "Score": 70},
+        {"Team Name": "Team Epsilon", "Score": 65},
+    ]
+
+    df = pd.DataFrame(example_teams)
+    df.to_csv("teams.csv", index=False)

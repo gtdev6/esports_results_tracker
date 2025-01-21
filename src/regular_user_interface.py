@@ -1,10 +1,10 @@
 import customtkinter as ctk
 import pandas as pd
 
-from src import Recent_Matches
-from src import Score_Board
-from src import main
-from src import specific_game_scoreboard
+import Recent_Matches
+import Score_Board
+import main
+import specific_game_scoreboard
 
 
 
@@ -58,32 +58,48 @@ def show_regular_user_frame(root):
     back_button = ctk.CTkButton(header_frame, text="Back", command=lambda: go_back_to_main_menu(frame, root))
     back_button.pack(side="left", padx=10, pady=20)
 
+    menu_frame_wrapper = ctk.CTkFrame(frame, fg_color="#2e2e2e", corner_radius=20, height=500, width=800)
+    menu_frame_wrapper.pack(side="top", padx=0, pady=50)
+
+    menu_frame = ctk.CTkFrame(menu_frame_wrapper, fg_color="#202020", corner_radius=20, height=500)
+    menu_frame.pack(fill="none", padx=100, pady=100)
+
     # Recent Matches
     recent_matches_button = ctk.CTkButton(
-        frame,
+        menu_frame,
         text="Recent Matches",
         font=("Arial", 16),
+        width=200,
+        height=100,  
         command=lambda: Recent_Matches.show_recent_matches(frame, root)
     )
-    recent_matches_button.pack(pady=10)
+    recent_matches_button.pack(side="left", padx=50, pady=50)
+
 
     # Scoreboard
     scoreboard_button = ctk.CTkButton(
-        frame,
+        menu_frame,
         text="Scoreboard",
         font=("Arial", 16),
+        width=200,
+        height=100,  
         command=lambda: Score_Board.create_score_root_frame(frame, root)
     )
-    scoreboard_button.pack(pady=10)
+    scoreboard_button.pack(side="left", padx=50, pady=50)  
 
     # Specific Game Scores
     game_scores_button = ctk.CTkButton(
-        frame,
+        menu_frame,
         text="Specific Game Scores",
         font=("Arial", 16),
+        width=200,
+        height=100,  
         command=lambda: specific_game_scoreboard.create_specific_score_root_frame(frame, root)  # Replace with selected game
     )
-    game_scores_button.pack(pady=10)
+    game_scores_button.pack(side="left", padx=50, pady=50)
+
+
+
 
 
 def go_back_to_main_menu(current_frame, parent_frame):

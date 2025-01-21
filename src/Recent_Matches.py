@@ -1,7 +1,7 @@
 import customtkinter as ctk
 import pandas as pd
 import os
-from src import regular_user_interface
+import regular_user_interface
 
 
 def ensure_matches_file():
