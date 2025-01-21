@@ -13,6 +13,7 @@ import record_match
 
 
 
+
 def load_data(filename):
     try:
         return pd.read_csv(filename)
@@ -107,7 +108,7 @@ def show_admin_frame(root):
         menu_row_three_frame, text="Record Match", font=("Arial", 16), 
         width=150,
         height=60,
-        # command=lambda: record_match(frame)
+        command=lambda: record_match.create_root_record_match_frame(frame, root)
     )
     record_match_button.pack(side="left", pady=20, padx=20)
     

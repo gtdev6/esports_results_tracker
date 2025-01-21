@@ -5,7 +5,7 @@ import os
 
 def ensure_teams_file():
     # Define the path to the teams.csv file
-    file_path = "teams.csv"
+    file_path = "src/teams.csv"
 
     # Check if the file exists
     if not os.path.exists(file_path):
@@ -22,7 +22,7 @@ def load_team_scores():
         ensure_teams_file()  # Ensure the teams file exists
 
         # Load team scores from CSV
-        teams = pd.read_csv("teams.csv")
+        teams = pd.read_csv("src/teams.csv")
 
         # Ensure "Score" is numeric
         teams["Score"] = pd.to_numeric(teams["Score"], errors="coerce").fillna(0)

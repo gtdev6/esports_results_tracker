@@ -41,7 +41,7 @@ def create_root_all_teams_frame(frame, parent_frame):
     load_table_data(scrollable_frame)
 
 def create_teams_file():
-    file_path = "teams.csv"
+    file_path = "src/teams.csv"
     if not os.path.isfile(file_path):
         try:
             with open(file_path, mode="w", newline="", encoding="utf-8") as file:
@@ -56,7 +56,7 @@ def load_table_data(scrollable_frame):
     for widget in scrollable_frame.winfo_children():
         widget.destroy()
 
-    file_path = "teams.csv"
+    file_path = "src/teams.csv"
     try:
         df = pd.read_csv(file_path)
 

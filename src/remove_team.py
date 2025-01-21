@@ -4,7 +4,7 @@ import pandas as pd
 import os
 
 def create_root_remove_team_frame(frame, parent_frame):
-    global combobox, remove_btn 
+    global combobox, remove_btn, team_entry_lbl
         # Hide the parent frame
     for widget in frame.winfo_children():
         widget.destroy()
@@ -33,8 +33,6 @@ def create_root_remove_team_frame(frame, parent_frame):
     main_frame = ctk.CTkFrame(remove_main_frame, corner_radius=10, fg_color="#212121")
     main_frame.pack(pady=(100, 40), padx=40, fill="none", side="top")
 
-
-        # Load team names from CSV
     team_names = load_team_names()
     
     # Set up combobox
@@ -44,8 +42,6 @@ def create_root_remove_team_frame(frame, parent_frame):
     else:
         combobox_values = ["No teams exist"]
         remove_btn_state = "disabled"
-
-    print(remove_btn_state)
 
     combobox_var = ctk.StringVar(value=combobox_values[0])
     combobox = ctk.CTkComboBox(
@@ -58,6 +54,9 @@ def create_root_remove_team_frame(frame, parent_frame):
     )
     combobox.pack(side="top", padx=20, pady=20)
 
+    team_entry_lbl = ctk.CTkLabel(main_frame, text="", font=("Arial", 14), height=0)
+    team_entry_lbl.configure(text_color="red")
+    team_entry_lbl.pack(side="top")
 
 # Remove Team Button
     remove_btn = ctk.CTkButton(
@@ -72,8 +71,7 @@ def create_root_remove_team_frame(frame, parent_frame):
     remove_btn.pack(side="top", padx=20, pady=20)
 
 def load_team_names():
-    """Load team names from the CSV file."""
-    file_path = "teams.csv"
+    file_path = "src/teams.csv"
     if not os.path.isfile(file_path):
         return []
 
@@ -88,11 +86,7 @@ def load_team_names():
         return []
 
 def remove_team(team_name):
-    """Remove a team from the CSV file."""
-    print("Remove Team")
-
-
-    file_path = "teams.csv"
+    file_path = "src/teams.csv"
     if not os.path.isfile(file_path):
         print("No teams file found.")
         return
@@ -109,9 +103,9 @@ def remove_team(team_name):
         # Save the updated file
         df.to_csv(file_path, index=False)
         print(f"Team '{team_name}' removed successfully!")
+        team_entry_lbl.configure(text=f"Team '{team_name}' removed successfully!", text_color="green")
 
-        # Refresh the UI or notify the user to refresh
-                # Refresh the combobox values
+
         refresh_ui()
     except Exception as e:
         print(f"Error removing team: {e}")

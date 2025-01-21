@@ -18,7 +18,7 @@ def load_data(filename):
 
 def show_game_scores(frame, game):
     # Load match data
-    matches = load_data("matches.csv")
+    matches = load_data("src/matches.csv")
     if matches.empty:
         label = ctk.CTkLabel(frame, text=f"No results for {game}.")
         label.pack(pady=10)
@@ -37,11 +37,9 @@ def show_game_scores(frame, game):
 
 
 def show_regular_user_frame(root):
-    # Clear existing widgets
     for widget in root.winfo_children():
         widget.destroy()
 
-    # Create a new frame
     frame = ctk.CTkFrame(root, corner_radius=10)
     frame.pack(pady=50, padx=50, fill="both", expand=True)
 
@@ -49,7 +47,6 @@ def show_regular_user_frame(root):
     header_frame = ctk.CTkFrame(frame, fg_color="#202020", corner_radius=10)
     header_frame.pack(fill="x", pady=40, padx=50)
 
-    # Title
     title_label = ctk.CTkLabel(header_frame, text="Regular User Mode", font=("Arial", 24))
     title_label.pack(pady=20)
 
@@ -64,7 +61,6 @@ def show_regular_user_frame(root):
     menu_frame = ctk.CTkFrame(menu_frame_wrapper, fg_color="#202020", corner_radius=20, height=500)
     menu_frame.pack(fill="none", padx=100, pady=100)
 
-    # Recent Matches
     recent_matches_button = ctk.CTkButton(
         menu_frame,
         text="Recent Matches",
@@ -76,7 +72,6 @@ def show_regular_user_frame(root):
     recent_matches_button.pack(side="left", padx=50, pady=50)
 
 
-    # Scoreboard
     scoreboard_button = ctk.CTkButton(
         menu_frame,
         text="Scoreboard",
@@ -87,7 +82,6 @@ def show_regular_user_frame(root):
     )
     scoreboard_button.pack(side="left", padx=50, pady=50)  
 
-    # Specific Game Scores
     game_scores_button = ctk.CTkButton(
         menu_frame,
         text="Specific Game Scores",

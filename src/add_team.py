@@ -6,20 +6,18 @@ import csv
 
 
 def create_root_add_team_frame(frame, parent_frame):
-        # Hide the parent frame
+    global team_entry_lbl
+
     for widget in frame.winfo_children():
         widget.destroy()
 
-    # Create a new frame
     add_team_main_frame = ctk.CTkFrame(frame, corner_radius=10)
     add_team_main_frame.configure(fg_color="#202020")
     add_team_main_frame.pack(pady=0, padx=0, fill="both", expand=True)
 
-    # Create a frame for the label and back button
     header_frame = ctk.CTkFrame(add_team_main_frame, fg_color="#202020")
     header_frame.pack(fill="x", pady=20)
 
-    # Add a label in the header frame
     label = ctk.CTkLabel(header_frame, text="Add Team", font=("Arial", 20))
     label.pack(side="left", padx=10)
 
@@ -37,7 +35,9 @@ def create_root_add_team_frame(frame, parent_frame):
                 command=lambda: save_team(entry))
     save_btn.pack(side="top", padx=20, pady=20)
 
-
+    team_entry_lbl = ctk.CTkLabel(add_team_main_frame, text="", font=("Arial", 14), height=0)
+    team_entry_lbl.configure(text_color="red")
+    team_entry_lbl.pack(side="top")
 
 
     # Create a back button in the header frame
@@ -49,39 +49,34 @@ def create_root_add_team_frame(frame, parent_frame):
 
 
 def save_team(entry):
-    print("btn clicked")
 
     team_name = entry.get().strip()
     if not team_name:
         print("Team name cannot be empty.")
+        team_entry_lbl.configure(text="Team name cannot be empty.", text_color="red")
         return
-    
-    # Define the file path for the CSV file
-    file_path = "teams.csv"
-    # Check if the team already exists
-    if os.path.isfile(file_path):  # Check if the file exists
+
+    file_path = "src/teams.csv"
+    if os.path.isfile(file_path):
         with open(file_path, mode='r', newline='', encoding='utf-8') as file:
             reader = csv.reader(file)
-            next(reader, None)  # Skip the header row
+            next(reader, None)
             for row in reader:
                 if row and row[0].strip().lower() == team_name.lower():
-                    print(f"Team '{team_name}' already exists.")
-                    return  # Exit the function if the team already exists
+                    team_entry_lbl.configure(text=f"Team '{team_name}' already exists.", text_color="red")
+                    return
 
-    # Open the file in append mode
+
     with open(file_path, mode='a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
-        
-        # If the file does not exist, write the header first
+
         if not os.path.isfile(file_path) or os.stat(file_path).st_size == 0:
-            writer.writerow(["Team Name", "Score"])  # Write header row
-        
-        # Write the team name and initial score of 0
+            writer.writerow(["Team Name", "Score"])
+
         writer.writerow([team_name, 0])
-    
-    # Clear the entry field and print a success message
+
     entry.delete(0, 'end')
-    print(f"Team '{team_name}' saved successfully!")
+    team_entry_lbl.configure(text=f"Team '{team_name}' saved successfully!", text_color="green")
 
 
 
