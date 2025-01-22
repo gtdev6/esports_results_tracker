@@ -75,7 +75,7 @@ def create_game_specific_table(frame, game_name):
 
     headers = ["Rank", "Team Name", "Score"]
     for col, header in enumerate(headers):
-        header_label = ctk.CTkLabel(scrollable_frame, text=header, font=("Arial", 14, "bold"), width=20, anchor="w")
+        header_label = ctk.CTkLabel(scrollable_frame, text=header, font=("Arial", 14, "bold"), width=200, anchor="w")
         header_label.grid(row=0, column=col, padx=5, pady=5)
 
 
@@ -85,13 +85,13 @@ def create_game_specific_table(frame, game_name):
             widget.destroy()
 
         for rank, row in enumerate(scores.itertuples(index=False), start=1):
-            rank_label = ctk.CTkLabel(scrollable_frame, text=str(rank), font=("Arial", 12), width=20, anchor="w")
+            rank_label = ctk.CTkLabel(scrollable_frame, text=str(rank), font=("Arial", 12), width=200, anchor="w")
             rank_label.grid(row=rank, column=0, padx=5, pady=5)
 
-            team_label = ctk.CTkLabel(scrollable_frame, text=row[0], font=("Arial", 12), width=20, anchor="w")
+            team_label = ctk.CTkLabel(scrollable_frame, text=row[0], font=("Arial", 12), width=200, anchor="w")
             team_label.grid(row=rank, column=1, padx=5, pady=5)
 
-            score_label = ctk.CTkLabel(scrollable_frame, text=str(row[1]), font=("Arial", 12), width=20, anchor="w")
+            score_label = ctk.CTkLabel(scrollable_frame, text=str(row[1]), font=("Arial", 12), width=200, anchor="w")
             score_label.grid(row=rank, column=2, padx=5, pady=5)
 
     refresh_game_table()

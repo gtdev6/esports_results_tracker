@@ -81,7 +81,7 @@ def create_scoreboard(frame):
 # Create the table header
     headers = ["Rank", "Team Name", "Score"]
     for col, header in enumerate(headers):
-        header_label = ctk.CTkLabel(table_frame, text=header, font=("Arial", 14, "bold"), width=20, anchor="w")
+        header_label = ctk.CTkLabel(table_frame, text=header, font=("Arial", 14, "bold"), width=200, anchor="w")
         header_label.grid(row=0, column=col, padx=5, pady=5)
 
     # Function to refresh table
@@ -95,13 +95,13 @@ def create_scoreboard(frame):
 
         # Add refreshed data from team_scores
         for rank, row in enumerate(team_scores.itertuples(index=False), start=1):
-            rank_label = ctk.CTkLabel(table_frame, text=str(rank), font=("Arial", 12), width=20, anchor="w")
+            rank_label = ctk.CTkLabel(table_frame, text=str(rank), font=("Arial", 12), width=200, anchor="w")
             rank_label.grid(row=rank, column=0, padx=5, pady=5)
 
-            team_label = ctk.CTkLabel(table_frame, text=row[0], font=("Arial", 12), width=20, anchor="w")
+            team_label = ctk.CTkLabel(table_frame, text=row[0], font=("Arial", 12), width=200, anchor="w")
             team_label.grid(row=rank, column=1, padx=5, pady=5)
 
-            score_label = ctk.CTkLabel(table_frame, text=str(row[1]), font=("Arial", 12), width=20, anchor="w")
+            score_label = ctk.CTkLabel(table_frame, text=str(row[1]), font=("Arial", 12), width=200, anchor="w")
             score_label.grid(row=rank, column=2, padx=5, pady=5)
 
     # Refresh the table initially to show data
@@ -119,13 +119,13 @@ def refresh_scoreboard(table_frame, scores):
 
     # Repopulate the table with updated scores
     for rank, data in enumerate(scores, start=1):
-        rank_label = ctk.CTkLabel(table_frame, text=str(rank), font=("Arial", 12), width=20, anchor="w")
+        rank_label = ctk.CTkLabel(table_frame, text=str(rank), font=("Arial", 12), width=200, anchor="w")
         rank_label.grid(row=rank, column=0, padx=5, pady=5)
 
-        team_label = ctk.CTkLabel(table_frame, text=data["team"], font=("Arial", 12), width=20, anchor="w")
+        team_label = ctk.CTkLabel(table_frame, text=data["team"], font=("Arial", 12), width=200, anchor="w")
         team_label.grid(row=rank, column=1, padx=5, pady=5)
 
-        score_label = ctk.CTkLabel(table_frame, text=str(data["score"]), font=("Arial", 12), width=20, anchor="w")
+        score_label = ctk.CTkLabel(table_frame, text=str(data["score"]), font=("Arial", 12), width=200, anchor="w")
         score_label.grid(row=rank, column=2, padx=5, pady=5)
 
 
@@ -139,16 +139,3 @@ def go_back_callback(current_frame, parent_frame):
     regular_user_interface.show_regular_user_frame(root=parent_frame)
 
 
-
-if __name__ == "__main__":
-    # Create example team data for testing
-    example_teams = [
-        {"Team Name": "Team Alpha", "Score": 85},
-        {"Team Name": "Team Beta", "Score": 78},
-        {"Team Name": "Team Gamma", "Score": 90},
-        {"Team Name": "Team Delta", "Score": 70},
-        {"Team Name": "Team Epsilon", "Score": 65},
-    ]
-
-    df = pd.DataFrame(example_teams)
-    df.to_csv("teams.csv", index=False)
