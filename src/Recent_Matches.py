@@ -13,24 +13,33 @@ def ensure_matches_file():
 
         df.to_csv(file_path, index=False)
         print(f"Created {file_path} with columns {columns}")
-
-
+    
 def load_recent_matches():
     try:
         ensure_matches_file()
 
+        # Read matches file
         matches = pd.read_csv("src/matches.csv")
 
-        matches["Date"] = pd.to_datetime(matches["Date"], errors='coerce')
+        # Ensure correct date format during parsing
+        matches["Date"] = pd.to_datetime(matches["Date"], format="%d-%m-%Y", errors="coerce")
 
+        # Identify and log invalid dates
+        if matches["Date"].isna().any():
+            print("Invalid dates found:")
+            print(matches[matches["Date"].isna()])
+
+        # Sort and retrieve recent matches
         recent_matches = matches.sort_values(by="Date", ascending=False).head(5)
 
+        # Format dates for display
         recent_matches["Date"] = recent_matches["Date"].dt.strftime("%d-%m-%Y")
 
         return recent_matches
     except Exception as e:
         print(f"Error loading matches: {e}")
         return pd.DataFrame(columns=["Match ID", "Team A", "Team B", "Game", "Winning Team", "Date"])
+
 
 
 def show_recent_matches(frame, parent_frame):

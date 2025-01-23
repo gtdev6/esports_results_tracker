@@ -51,7 +51,7 @@ def create_score_root_frame(frame, parent_frame):
     header_frame.pack(fill="x", pady=20)
 
     # Add a label in the header frame
-    label = ctk.CTkLabel(header_frame, text="Recent Matches", font=("Arial", 20))
+    label = ctk.CTkLabel(header_frame, text="Score Board", font=("Arial", 20))
     label.pack(side="left", padx=10)
 
     label.place(relx=0.5, rely=0.5, anchor="center")

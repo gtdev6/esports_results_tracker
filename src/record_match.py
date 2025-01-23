@@ -209,17 +209,75 @@ def update_team_score(winning_team):
         print(f"Error updating team score: {e}")
 
 
-def save_record_match(date, team_a, team_b, game, winning_team):
+# def save_record_match(date, team_a, team_b, game, winning_team):
 
+#     try:
+#         datetime.strptime(date, "%d-%m-%Y")
+#     except ValueError:
+#         print("Invalid date format. Use DD-MM-YYYY.")
+#         record_output_lbl.configure(text="Invalid date format. Use DD-MM-YYYY.", text_color="red")
+
+#         return
+
+
+#     if team_a == "No teams exist" or team_b == "No teams exist" or game == "No games exist":
+#         print("Invalid input: Please ensure teams and game exist.")
+#         record_output_lbl.configure(text="Invalid input: Please ensure teams and game exist.", text_color="red")
+#         return
+
+#     if team_a == team_b:
+#         print("Team A and Team B cannot be the same.")
+#         record_output_lbl.configure(text="Team A and Team B cannot be the same.", text_color="red")
+#         return
+
+#     if winning_team not in [team_a, team_b]:
+#         print("Winning team must be either Team A or Team B.")
+#         record_output_lbl.configure(text="Winning team must be either Team A or Team B.", text_color="red")
+#         return
+
+#     file_path = "src/matches.csv"
+#     if not os.path.isfile(file_path):
+#         with open(file_path, mode="w", newline="", encoding="utf-8") as file:
+#             file.write("Match ID,Team A,Team B,Game,Winning Team,Date\n")
+
+
+#     try:
+#         if os.path.isfile(file_path):
+#             df = pd.read_csv(file_path)
+#         else:
+#             df = pd.DataFrame(columns=["Match ID", "Team A", "Team B", "Game", "Winning Team", "Date"])
+
+#         match_id = len(df) + 1
+
+#         new_row = pd.DataFrame([{
+#             "Match ID": match_id,
+#             "Team A": team_a,
+#             "Team B": team_b,
+#             "Game": game,
+#             "Winning Team": winning_team,
+#             "Date": date,
+#         }])
+
+#         updated_df = pd.concat([df, new_row], ignore_index=True)
+
+#         updated_df.to_csv(file_path, index=False)
+#         print(f"Match record saved successfully: {new_row.to_dict(orient='records')[0]}")
+#         record_output_lbl.configure(text="Match record saved successfully.", text_color="green")
+#         update_team_score(winning_team)
+
+#     except Exception as e:
+#         print(f"Error saving match record: {e}")
+
+def save_record_match(date, team_a, team_b, game, winning_team):
     try:
+        # Validate date format
         datetime.strptime(date, "%d-%m-%Y")
     except ValueError:
         print("Invalid date format. Use DD-MM-YYYY.")
         record_output_lbl.configure(text="Invalid date format. Use DD-MM-YYYY.", text_color="red")
-
         return
 
-
+    # Validate inputs
     if team_a == "No teams exist" or team_b == "No teams exist" or game == "No games exist":
         print("Invalid input: Please ensure teams and game exist.")
         record_output_lbl.configure(text="Invalid input: Please ensure teams and game exist.", text_color="red")
@@ -235,38 +293,39 @@ def save_record_match(date, team_a, team_b, game, winning_team):
         record_output_lbl.configure(text="Winning team must be either Team A or Team B.", text_color="red")
         return
 
+    # Ensure the matches file exists
     file_path = "src/matches.csv"
     if not os.path.isfile(file_path):
         with open(file_path, mode="w", newline="", encoding="utf-8") as file:
             file.write("Match ID,Team A,Team B,Game,Winning Team,Date\n")
 
-
     try:
+        # Load existing data or create a new DataFrame
         if os.path.isfile(file_path):
             df = pd.read_csv(file_path)
         else:
             df = pd.DataFrame(columns=["Match ID", "Team A", "Team B", "Game", "Winning Team", "Date"])
 
+        # Generate Match ID and add a new row
         match_id = len(df) + 1
-
-        new_row = pd.DataFrame([{
+        new_row = {
             "Match ID": match_id,
             "Team A": team_a,
             "Team B": team_b,
             "Game": game,
             "Winning Team": winning_team,
-            "Date": date,
-        }])
+            "Date": date,  # Date is already validated
+        }
 
-        updated_df = pd.concat([df, new_row], ignore_index=True)
-
-        updated_df.to_csv(file_path, index=False)
-        print(f"Match record saved successfully: {new_row.to_dict(orient='records')[0]}")
+        # Append the new row and save back to CSV
+        updated_df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+        updated_df.to_csv(file_path, index=False, encoding="utf-8")
+        print(f"Match record saved successfully: {new_row}")
         record_output_lbl.configure(text="Match record saved successfully.", text_color="green")
         update_team_score(winning_team)
-
     except Exception as e:
         print(f"Error saving match record: {e}")
+
 
 
 
